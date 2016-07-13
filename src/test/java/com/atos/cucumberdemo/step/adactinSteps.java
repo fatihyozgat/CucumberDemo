@@ -262,21 +262,21 @@ public class adactinSteps {
 
     @And("^The final billed Price is calculated correct$")
     public void theFinalBilledPriceIsCalculatedCorrect() throws Throwable {
-        WebElement element = (webDriver.findElement(By.id("total_days_dis")));
-        String dagen = element.getAttribute("value");
+        WebElement total_days_dis = (webDriver.findElement(By.id("total_days_dis")));
+        String dagen = total_days_dis.getAttribute("value");
         char eersteLetter = dagen.charAt(0);
-        //String firstLetter = String.valueOf(webDriver.findElement(By.id("total_days_dis")));
         Integer bookdays = Integer.parseInt(String.valueOf(eersteLetter));
-        System.out.println(bookdays);
-        int price = 125 * adults * no_rooms;
-        System.out.println(price);
-        double metgst = gst * no_rooms * bookdays;
-        System.out.println(metgst);
-        Double fbprice = price + metgst;
-        WebElement element1 = webDriver.findElement(By.id("final_price_dis"));
-        assertEquals("AUD $ " + fbprice.intValue() + "", element1.getAttribute("value"));
+
+        WebElement price_night_dis = (webDriver.findElement(By.id("price_night_dis")));
+        String pricePerNight = price_night_dis.getAttribute("value");
+        String pakCijfers = pricePerNight.substring(6,9);
+        Integer dagprijs = Integer.parseInt(String.valueOf(pakCijfers));
+
+        int price = dagprijs * adults * no_rooms;
+        double berekengst = gst * no_rooms * bookdays;
+        Double fbprice = price + berekengst;
+        WebElement final_price_dis = webDriver.findElement(By.id("final_price_dis"));
+        assertEquals("AUD $ " + fbprice.intValue() + "", final_price_dis.getAttribute("value"));
 
     }
-
-
 }
