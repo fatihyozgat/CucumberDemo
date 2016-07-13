@@ -32,10 +32,10 @@ Feature: TC-112
     And I select Hotel "Hotel Creek"
     And I select Room type "Standard"
     And I select the number of rooms "2"
-    And I select the amount of adults "1"
-    And I select the amount of children "0"
+    And I select the amount of adults "5"
+    And I select the amount of children "2"
     And the day that I check in is "0" days from now
-    And the day that I check out is "1" days from now
+    And the day that I check out is "3" days from now
     Then The right hotel should be shown
     And The price should be correct
 

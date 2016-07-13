@@ -6,6 +6,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.apache.commons.lang3.time.DateUtils;
+//import org.apache.xpath.operations.String;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -53,7 +54,7 @@ public class adactinSteps {
     @Then("^I am logged in$")
     public void I_am_logged_in() throws Throwable {
         WebElement element = webDriver.findElement(By.id("username_show"));
-        String WelcomeText = "Hello TestlabCucumberDemo!";
+        java.lang.String WelcomeText = "Hello TestlabCucumberDemo!";
         WelcomeText.equals(element.getText());
     }
 
@@ -86,10 +87,10 @@ public class adactinSteps {
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         java.util.Date mydate = format.parse(today);
         mydate = DateUtils.addDays(mydate, days);
-        String inputdate = new SimpleDateFormat("dd/MM/yyyy").format(mydate);
+        String checkindate = new SimpleDateFormat("dd/MM/yyyy").format(mydate);
         element.clear();
-        element.sendKeys(inputdate);
-        this.results.add(inputdate);
+        element.sendKeys(checkindate);
+        this.results.add(checkindate);
     }
 
     @And("^the day that I check out is \"([^\"]*)\" days from now$")
@@ -99,10 +100,10 @@ public class adactinSteps {
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         java.util.Date mydate = format.parse(today);
         mydate = DateUtils.addDays(mydate, days);
-        String inputdate = new SimpleDateFormat("dd/MM/yyyy").format(mydate);
+        String checkoutdate = new SimpleDateFormat("dd/MM/yyyy").format(mydate);
         element.clear();
-        element.sendKeys(inputdate);
-        this.results.add(inputdate);
+        element.sendKeys(checkoutdate);
+        this.results.add(checkoutdate);
     }
 
     @Then("^the search results in an error message$")
@@ -206,7 +207,14 @@ public class adactinSteps {
 
     @And("^The price should be correct$")
     public void The_price_should_be_correct() throws Throwable {
-        int price = 125 * adults * no_rooms;
+
+        WebElement no_days = (webDriver.findElement(By.id("no_days_0")));
+        java.lang.String dagen = no_days.getAttribute("value");
+        char eersteLetter1 = dagen.charAt(0);
+        Integer days = Integer.parseInt(java.lang.String.valueOf(eersteLetter1));
+
+
+        int price = days * no_rooms;
         WebElement element = webDriver.findElement(By.id("total_price_0"));
         assertEquals("AUD $ " + price + "", element.getAttribute("value"));
         //System.out.println(element.getAttribute("value"));
