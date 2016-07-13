@@ -30,10 +30,12 @@ public class adactinSteps {
     private List<String> results = new ArrayList<String>();
     private int adults;
     private int no_rooms;
+    private double gst;
+    private double fbprice;
 
-    public adactinSteps(SharedDriver webDriver) {
-        this.webDriver = webDriver; 
-        //this.driver = new driver;
+    private adactinSteps(double gst, double fbprice) {
+        this.gst = gst;
+        this.fbprice = fbprice;
     }
 
     @Given("^I am on the adactin site$")
@@ -258,4 +260,15 @@ public class adactinSteps {
             }
         }
     }
+
+    @And("^The final billed Price is calculated correct$")
+    public void theFinalBilledPriceIsCalculatedCorrect() throws Throwable {
+        int price = 125 * adults * no_rooms;
+        double gst = 12.5 * no_rooms;
+        double fbprice = price + gst;
+        WebElement element = webDriver.findElement(By.id("final_price_dis"));
+        assertEquals("AUD $ " + fbprice + "", element.getAttribute("value"));
+    }
+
+
 }
