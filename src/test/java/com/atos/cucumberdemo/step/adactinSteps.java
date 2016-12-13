@@ -6,7 +6,6 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.apache.commons.lang3.time.DateUtils;
-//import org.apache.xpath.operations.String;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,6 +20,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+//import org.apache.xpath.operations.String;
+
 /**
  * Created by Vincent Free on 27-3-2015.
  */
@@ -31,8 +32,7 @@ public class adactinSteps {
     private List<String> results = new ArrayList<String>();
     private int adults;
     private int no_rooms;
-    private double gst = 12.5;
-    private double fbprice;
+    private double gst = 0.1;
 
     public adactinSteps(WebDriver webDriver) {
         this.webDriver = webDriver;
@@ -127,7 +127,7 @@ public class adactinSteps {
     }
 
     @And("^I select Hotel \"([^\"]*)\"$")
-    public void I_select_Hotel(String hotels) throws Throwable {
+    public  void I_select_Hotel(String hotels) throws Throwable {
         this.results.add(hotels);
         WebElement element = webDriver.findElement(By.id("hotels"));
         element.click();
@@ -143,31 +143,29 @@ public class adactinSteps {
     }
 
     @And("^I select the number of rooms \"([^\"]*)\"$")
-    public void I_select_the_number_of_rooms(String room) throws Throwable {
-        this.results.add(room + " Rooms");
-        this.no_rooms = Integer.parseInt(room);
+    public void I_select_the_number_of_rooms(String room_no) throws Throwable {
+        this.results.add(room_no);
+//        this.results.add(room + " Rooms");
         WebElement element = webDriver.findElement(By.id("room_nos"));
-        if (room.equals("1") && (element.getAttribute("value").contains("One") || element.getAttribute("value").contains("1"))) {
-
-            //System.out.println("number of rooms would be: "+room);
-        } else {
+//        if (room.equals("1") && (element.getAttribute("value").contains("One") || element.getAttribute("value").contains("1"))) {
+//
+//            //System.out.println("number of rooms would be: "+room);
+//        } else {
             element.click();
-            element.sendKeys(room);
-        }
+            element.sendKeys(room_no);
     }
 
     @And("^I select the amount of adults \"([^\"]*)\"$")
     public void I_select_the_amount_of_adults(String adult) throws Throwable {
-        //this.results.add(adult);
-        this.adults = Integer.parseInt(adult);
+        this.results.add(adult);
+//        this.adults = Integer.parseInt(adult);
         WebElement element = webDriver.findElement(By.id("adult_room"));
-        if (adult.equals("1") && (element.getAttribute("value").contains("One") || element.getAttribute("value").contains("1"))) {
-
-            //System.out.println("number of adults: "+adult);
-        } else {
+//        if (adult.equals("1") && (element.getAttribute("value").contains("One") || element.getAttribute("value").contains("1"))) {
+//
+//            //System.out.println("number of adults: "+adult);
+//        } else {
             element.click();
             element.sendKeys(adult);
-        }
     }
 
     @And("^I select the amount of children \"([^\"]*)\"$")
@@ -195,14 +193,16 @@ public class adactinSteps {
     public void The_right_hotel_should_be_shown() throws Throwable {
         webDriver.findElement(By.id("Submit")).click();
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        WebElement element;
-        element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("select_form")));
-        for (Object object : results) {
-            element = webDriver.findElement(By.xpath("//input[@value='" + object.toString() + "']"));
-            //System.out.println(element.getAttribute("value"));
-            assertEquals(element.getAttribute("value").toLowerCase(), object.toString().toLowerCase());
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("hotel_name_0")));
+//        assertEquals(toString(I_select_Hotel(), element.getText());
+//        WebElement element;
+//        element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("select_form")));
+//        for (Object object : results) {
+//            element = webDriver.findElement(By.xpath("//input[@value='" + object.toString() + "']"));
+//            //System.out.println(element.getAttribute("value"));
+//            assertEquals(element.getAttribute("value").toLowerCase(), object.toString().toLowerCase());
 
-        }
+        
     }
 
     @And("^The price should be correct$")
@@ -210,14 +210,26 @@ public class adactinSteps {
 
         WebElement no_days = (webDriver.findElement(By.id("no_days_0")));
         java.lang.String dagen = no_days.getAttribute("value");
-        char eersteLetter1 = dagen.charAt(0);
-        Integer days = Integer.parseInt(java.lang.String.valueOf(eersteLetter1));
+        char eersteLetterDagen = dagen.charAt(0);
+        Integer days = Integer.parseInt(java.lang.String.valueOf(eersteLetterDagen));
+        System.out.println(days);
 
+        WebElement no_rooms = (webDriver.findElement(By.id("rooms_0")));
+        java.lang.String kamer = no_rooms.getAttribute("value");
+        char eersteLetterKamer = kamer.charAt(0);
+        Integer kamers = Integer.parseInt(java.lang.String.valueOf(eersteLetterKamer));
+        System.out.println(kamers);
 
-        int price = days * no_rooms;
+        WebElement price_night = (webDriver.findElement(By.id("price_night_0")));
+        java.lang.String prijs_per_nacht = price_night.getAttribute("value");
+        String prijsBegintBij = prijs_per_nacht.substring(6);
+        Integer prijs = Integer.parseInt(java.lang.String.valueOf(prijsBegintBij));
+        System.out.println(prijs);
+
+        int price = days * prijs * kamers;
         WebElement element = webDriver.findElement(By.id("total_price_0"));
         assertEquals("AUD $ " + price + "", element.getAttribute("value"));
-        //System.out.println(element.getAttribute("value"));
+        System.out.println(price);
     }
 
     @And("^I want to logout and verify that I am logged out$")
@@ -251,40 +263,56 @@ public class adactinSteps {
     @And("^The price should be the same as the previous screen$")
     public void The_price_should_be_the_same_as_the_previous_screen() throws Throwable {
         //TODO check hotel info and price
-        //WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        WebElement element;
-        //element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("Book A Hotel")));
-        for (Object object : results) {
-            if (object.toString().contains("Rooms")) {
-                String newResult;
-                newResult = object.toString();
-                newResult.replace("Rooms", "Room(s)");
-                //System.out.println(newResult);
-            } else {
-                element = webDriver.findElement(By.xpath("//input[@value='" + object.toString() + "']"));
-                //System.out.println(element.getAttribute("value"));
-                assertEquals(element.getAttribute("value").toLowerCase(), object.toString().toLowerCase());
-            }
-        }
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("login_title")));
+//        for (Object object : results) {
+//            if (object.toString().contains("Rooms")) {
+//                String newResult;
+//                newResult = object.toString();
+//                newResult.replace("Rooms", "Room(s)");
+//                //System.out.println(newResult);
+//            } else {
+//                element = webDriver.findElement(By.xpath("//input[@value='" + object.toString() + "']"));
+//                //System.out.println(element.getAttribute("value"));
+//                assertEquals(element.getAttribute("value").toLowerCase(), object.toString().toLowerCase());
+//            }
+//        }
     }
 
     @And("^The final billed Price is calculated correct$")
     public void theFinalBilledPriceIsCalculatedCorrect() throws Throwable {
+        WebElement room_num_dis = (webDriver.findElement(By.id("room_num_dis")));
+        String kamer = room_num_dis.getAttribute("value");
+        char eersteLetterKamer = kamer.charAt(0);
+        Integer kamers = Integer.parseInt(String.valueOf(eersteLetterKamer));
+        System.out.println("kamers" + kamers);
+
         WebElement total_days_dis = (webDriver.findElement(By.id("total_days_dis")));
         String dagen = total_days_dis.getAttribute("value");
         char eersteLetter = dagen.charAt(0);
         Integer bookdays = Integer.parseInt(String.valueOf(eersteLetter));
+        System.out.println("bookdays" + bookdays);
 
         WebElement price_night_dis = (webDriver.findElement(By.id("price_night_dis")));
         String pricePerNight = price_night_dis.getAttribute("value");
-        String pakCijfers = pricePerNight.substring(6,9);
+        String pakCijfers = pricePerNight.substring(6);
         Integer dagprijs = Integer.parseInt(String.valueOf(pakCijfers));
+        System.out.println("dagprijs" + dagprijs);
 
-        int price = dagprijs * adults * no_rooms;
-        double berekengst = gst * no_rooms * bookdays;
-        Double fbprice = price + berekengst;
+        int price = dagprijs * kamers * bookdays;
+        System.out.println("price" + price);
+        double berekengst = gst * price;
+        System.out.println("berekengst" + berekengst);
+        double fbprice = (price + berekengst);
+        System.out.println("fbprice" + fbprice);
         WebElement final_price_dis = webDriver.findElement(By.id("final_price_dis"));
-        assertEquals("AUD $ " + fbprice.intValue() + "", final_price_dis.getAttribute("value"));
+        assertEquals("AUD $ " + fbprice + "", final_price_dis.getAttribute("value"));
 
+    }
+
+    @Then("^The \"([^\"]*)\" should be shown$")
+    public void theShouldBeShown(String arg0) throws Throwable {
+        WebElement element = webDriver.findElement(By.className("login_title"));
+        assertEquals("Book A Hotel ", element.getText());
     }
 }
