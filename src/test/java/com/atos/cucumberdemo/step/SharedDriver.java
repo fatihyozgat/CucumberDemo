@@ -70,7 +70,7 @@ public class SharedDriver extends EventFiringWebDriver {
     static {
         String browserName = System.getProperty("browser");
         if(browserName == null) {
-            browserName = "chrome";
+//            browserName = "chrome";
             browserName = "phantomjs";
         }
         if(browserName.equals("firefox")) {
@@ -88,9 +88,9 @@ public class SharedDriver extends EventFiringWebDriver {
         else if(browserName.equals("phantomjs")) {
             String pathToDriver = System.getProperty("pathToDriver");
             if(pathToDriver == null) {
-                pathToDriver = "C:/driver/phantomjs-2.1.1-windows/bin/phantomjs.exe";
+                pathToDriver = "C://driver//phantomjs.exe";
             }
-            System.setProperty("webdriver.phantomjs.driver", pathToDriver);
+            System.setProperty("webdriver.phantomjs,driver", pathToDriver);
             REAL_DRIVER = new PhantomJSDriver();
         }
         else if(browserName.equals("internetExplorer")) {
