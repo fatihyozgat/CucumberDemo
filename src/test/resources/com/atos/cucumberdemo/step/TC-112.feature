@@ -31,8 +31,8 @@ Feature: TC-112
     When I set the location to "Sydney"
     And I select Hotel "Hotel Creek"
     And I select Room type "Standard"
-    And I select the number of rooms "2"
-    And I select the amount of adults "5"
+    And I select the number of rooms "3"
+    And I select the amount of adults "4"
     And I select the amount of children "2"
     And the day that I check in is "0" days from now
     And the day that I check out is "3" days from now
