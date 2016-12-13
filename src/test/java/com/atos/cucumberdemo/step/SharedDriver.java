@@ -10,10 +10,15 @@ import cucumber.api.java.Before;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.phantomjs.
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
-    /**
+import static java.lang.System.err;
+
+/**
      * <p>
      * Example of a WebDriver implementation that has delegates all methods to a static instance (REAL_DRIVER) that is only
      * created once for the duration of the JVM. The REAL_DRIVER is automatically closed when the JVM exits. This makes
@@ -33,19 +38,69 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
      * the life of the JVM.
      * </p>
      */
+/*
     public class SharedDriver extends EventFiringWebDriver {
-        private static final WebDriver REAL_DRIVER = new FirefoxDriver();
+    String currentDir = System.getProperty("user.dir");
+    String marionetteDriverLocation = currentDir + "C:\\geckodriver\\geckodriver.exe";
+    System.setProperty ("webdriver.gecko.driver", marionetteDriverLocation);
+    WebDriver driver = new MarionetteDriver();
+        private static final WebDriver REAL_DRIVER = new MarionetteDriver();
+        //private static final WebDriver REAL_DRIVER = new FirefoxDriver();
         private static final Thread CLOSE_THREAD = new Thread() {
             @Override
             public void run() {
                 REAL_DRIVER.close();
             }
         };
+    static {
+        Runtime.getRuntime().addShutdownHook(CLOSE_THREAD);
+    }
+*/
 
-        static {
-            Runtime.getRuntime().addShutdownHook(CLOSE_THREAD);
+public class SharedDriver extends EventFiringWebDriver {
+    //System.setProperty("webdriver.chrome.driver", "C://driver//chromedriver.exe");
+    private static final WebDriver REAL_DRIVER;
+    private static final Thread CLOSE_THREAD = new Thread() {
+        @Override
+        public void run() {
+            REAL_DRIVER.close();
+        }
+    };
+
+    static {
+        String browserName = System.getProperty("browser");
+        if(browserName == null) {
+            browserName = "chrome";
+            browserName = "phantomjs";
+        }
+        if(browserName.equals("firefox")) {
+            REAL_DRIVER = new FirefoxDriver();
+        }
+        else if(browserName.equals("chrome")) {
+            String pathToDriver = System.getProperty("pathToDriver");
+            if(pathToDriver == null) {
+                pathToDriver = "C://driver//chromedriver.exe";
+            }
+            System.setProperty("webdriver.chrome.driver", pathToDriver);
+            REAL_DRIVER = new ChromeDriver();
         }
 
+        else if(browserName.equals("phantomjs")) {
+            String pathToDriver = System.getProperty("pathToDriver");
+            if(pathToDriver == null) {
+                pathToDriver = "C:/driver/phantomjs-2.1.1-windows/bin/phantomjs.exe";
+            }
+            System.setProperty("webdriver.phantomjs.driver", pathToDriver);
+            REAL_DRIVER = new PhantomJSDriver();
+        }
+        else if(browserName.equals("internetExplorer")) {
+            REAL_DRIVER = new InternetExplorerDriver();
+        }
+        else {
+            throw new RuntimeException("You have not specified a valid browser");
+        }
+        Runtime.getRuntime().addShutdownHook(CLOSE_THREAD);
+    }
         public SharedDriver() {
             super(REAL_DRIVER);
         }
@@ -69,7 +124,7 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
                 byte[] screenshot = getScreenshotAs(OutputType.BYTES);
                 scenario.embed(screenshot, "image/png");
             } catch (WebDriverException somePlatformsDontSupportScreenshots) {
-                System.err.println(somePlatformsDontSupportScreenshots.getMessage());
+                err.println(somePlatformsDontSupportScreenshots.getMessage());
             }
         }
     }
